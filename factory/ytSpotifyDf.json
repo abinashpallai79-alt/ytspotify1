@@ -1,0 +1,9 @@
+{
+	"name": "ytSpotifyDf",
+	"location": "southindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "a0f15056-5c52-4ff5-b86b-6adf0cb78723",
+		"tenantId": "01413f67-94c9-4b3e-896d-0e7cc42ff7ed"
+	}
+}
