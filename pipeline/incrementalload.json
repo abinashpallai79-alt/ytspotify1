@@ -129,6 +129,112 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "updatelastcdc",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "maxcdc",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"additionalColumns": {
+							"type": "Expression",
+							"value": "select max()"
+						},
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Jsoncdc",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "bronzelayer",
+							"folder": "cdc",
+							"filename": "empty.json"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Jsoncdc",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": "bronzelayer",
+							"folder": "cdc",
+							"filename": "cdc.json"
+						}
+					}
+				]
+			},
+			{
+				"name": "maxcdc",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "azuresqltoadls",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": {
+								"value": "select max(@{pipeline().parameters.cdc_col}) from @{pipeline().parameters.schema}.@{pipeline().parameters.table}",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
 			}
 		],
 		"parameters": {
