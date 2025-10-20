@@ -133,8 +133,6 @@
 			{
 				"name": "updatelastcdc",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "maxcdc",
@@ -154,10 +152,15 @@
 				"typeProperties": {
 					"source": {
 						"type": "JsonSource",
-						"additionalColumns": {
-							"type": "Expression",
-							"value": "select max()"
-						},
+						"additionalColumns": [
+							{
+								"name": "cdc",
+								"value": {
+									"value": "@activity('maxcdc').output.resultSets[0].rows[0].cdc",
+									"type": "Expression"
+								}
+							}
+						],
 						"storeSettings": {
 							"type": "AzureBlobFSReadSettings",
 							"recursive": true,
