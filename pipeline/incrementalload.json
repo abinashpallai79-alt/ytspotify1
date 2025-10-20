@@ -31,7 +31,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT * FROM  dbo.@{pipeline().parameters.schema}.@{pipeline().parameters.table}\nwhere @{pipeline().parameters.cdc_col}>'@{activity('lastcdc').output.value[0].cdc}'",
+							"value": "SELECT * FROM  dbo.@{pipeline().parameters.schema}.@{pipeline().parameters.table}\nwhere @{pipeline().parameters.cdc_col}>",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
@@ -110,7 +110,7 @@
 							"filename": "cdc.json"
 						}
 					},
-					"firstRowOnly": true
+					"firstRowOnly": false
 				}
 			},
 			{
